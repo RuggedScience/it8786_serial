@@ -254,8 +254,11 @@ static void __init it8786_register_ports(void)
             continue;
 		}
 
-        // Always start with the clock in the normal state.
-        set_serial_clock_div(ip, IT8786_SERIAL_CLOCK_DIV_13);
+        if (enter_sio() == 0) {
+            // Always start with the clock in the normal state.
+            set_serial_clock_div(ip, IT8786_SERIAL_CLOCK_DIV_13);
+            exit_sio();
+        }
 
         pr_info("Registerd port %d at base addres 0x%lx\n", i, ip->up.port.iobase);
         ip->line = ret;
