@@ -1,0 +1,1 @@
+obj-m  := it8786_serial.o

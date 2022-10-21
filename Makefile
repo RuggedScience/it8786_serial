@@ -1,5 +1,20 @@
-obj-m += it8786_serial.o
-all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+# Ref: https://www.kernel.org/doc/Documentation/kbuild/modules.txt
+ifneq ($(KERNELRELEASE),)
+# kbuild part of makefile
+include Kbuild
+
+else
+# normal makefile
+KDIR ?= /lib/modules/`uname -r`/build
+
+default:
+	$(MAKE) -C $(KDIR) M=$$PWD
+
+install:
+	$(MAKE) -C $(KDIR) M=$$PWD modules_install
+	depmod -A
+
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(MAKE) -C $(KDIR) M=$$PWD clean
+
+endif
