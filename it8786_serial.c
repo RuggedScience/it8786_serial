@@ -13,15 +13,9 @@
 
 #include <linux/module.h>
 #include <linux/errno.h>
-#include <linux/init.h>
 #include <linux/io.h>
 #include <linux/ioport.h>
-#include <linux/dev_printk.h>
-#include <linux/serial_core.h>
-#include <linux/serial_reg.h>
 #include <linux/serial_8250.h>
-#include <linux/tty_driver.h>
-#include <linux/platform_device.h>
 
 
 #define IT8786_SERIAL_MAX_UART			6       // IT8786 offers six serial ports
