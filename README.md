@@ -29,6 +29,12 @@ The commands to install the dependencies varies between distros. Below are instr
 * `sudo dnf install git "kernel-devel-uname-r = $(uname -r)"`
 </details>
 
+<details open>
+<summary><h5>CentOS</h5></summary>
+
+* `sudo yum install git gcc "kernel-devel-uname-r = $(uname -r)"`
+</details>
+
 After the dependencies are installed the source files can be downloaded and compiled.
 * `git clone https://github.com/ruggedscience/it8786_serial.git`
 * `make`
