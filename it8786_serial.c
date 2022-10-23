@@ -56,17 +56,10 @@ static struct it8786_serial_port it8786_ports[IT8786_SERIAL_MAX_UART] = {
     IT8786_PORT(0x0C),
 };
 
-static struct resource *sio_resource;
-
 // Special set of writes that must be performed to 
 // allow access to the Super IO's config registers.
 static int enter_sio(void)
 {
-    // We already entered config mode... ignore call.
-    if (sio_resource) {
-        return 0;
-    }
-
     // Ref: https://lwn.net/Articles/338837/
     if (!request_muxed_region(IT8786_SPECIAL_ADDR, 2, "it8786_serial")) {
         return -EBUSY;
@@ -92,7 +85,6 @@ static void exit_sio(void)
 	outb(0x02, IT8786_SPECIAL_DATA);
 
     release_region(IT8786_SPECIAL_ADDR, 2);
-    sio_resource = NULL;
 }
 
 // Read the value of a single Super IO config register.
@@ -155,7 +147,7 @@ static void set_serial_clock_div(struct it8786_serial_port *port, uint8_t diviso
 
     set_sio_ldn(port->ldn);
     config = read_sio_reg(0xF0);
-   
+
     // Clear current clock settings
     config &= ~IT8786_SERIAL_CLOCK_MASK;
     // Apply the new clock settings
