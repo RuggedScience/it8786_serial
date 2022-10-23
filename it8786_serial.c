@@ -8,7 +8,7 @@
  * Timothy Lassiter <tim.lassiter@ruggedscience.com>
  */
 
-#define DEBUG
+//#define DEBUG
 #define pr_fmt(fmt) "%s: " fmt, KBUILD_MODNAME
 
 #include <linux/module.h>
@@ -156,14 +156,10 @@ static void set_serial_clock_div(struct it8786_serial_port *port, uint8_t diviso
     set_sio_ldn(port->ldn);
     config = read_sio_reg(0xF0);
    
-    pr_debug("Port %d (ldn = %d, base = 0x%lx) old reg: 0x%x\n", port->line, port->ldn, port->up.port.iobase, config);
-
     // Clear current clock settings
     config &= ~IT8786_SERIAL_CLOCK_MASK;
     // Apply the new clock settings
     config |= (divisor << 1);
-
-    pr_debug("Port %d (ldn = %d, base = 0x%lx) new reg: 0x%x\n", port->line, port->ldn, port->up.port.iobase, config);
 
     write_sio_reg(0xF0, config);
 }
@@ -197,9 +193,9 @@ static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *t
             port->uartclk = 14769230;
         }
         exit_sio();
-        pr_debug("Baud: %i, Clock: %i\n", baud, port->uartclk);
+        pr_debug("Setting baud to %i and clock to %i\n", baud, port->uartclk);
     } else {
-        pr_debug("Unable to enter Super IO config mode... Can't update clock div\n");
+        pr_warn("Unable to enter Super IO config mode... Can't update clock div\n");
     }
 
     // We updated the uartclock value so now the 8250 driver
