@@ -17,6 +17,9 @@
 #include <linux/ioport.h>
 #include <linux/serial_8250.h>
 
+#ifndef UART_DIV_MAX
+#define UART_DIV_MAX 0xFFFF
+#endif
 
 #define IT8786_SERIAL_MAX_UART			6       // IT8786 offers six serial ports
 
