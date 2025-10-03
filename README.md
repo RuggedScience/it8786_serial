@@ -26,7 +26,7 @@ The commands to install the dependencies varies between distros. Below are instr
 <details open>
 <summary><h5>Fedora</h5></summary>
 
-* `sudo dnf install git "kernel-devel-uname-r = $(uname -r)"`
+* `sudo dnf install git kernel-devel`
 </details>
 
 <details open>
