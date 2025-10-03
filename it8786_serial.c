@@ -156,7 +156,7 @@ static void set_serial_clock_div(struct it8786_serial_port *port, uint8_t diviso
     write_sio_reg(0xF0, config);
 }
 
-static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *termios, struct ktermios *old)
+static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *termios, const struct ktermios *old)
 {
     unsigned int baud;
     struct it8786_serial_port *ip;
@@ -177,6 +177,13 @@ static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *t
             set_serial_clock_div(ip, IT8786_SERIAL_CLOCK_DIV_13);
             // SIO Clock (24MHz) / Clock Div (13) = 1,846,153 or close enough to standard clock of 1.8432MHz.
             port->uartclk = 1843200;
+        } else if (baud == 250000) {
+            // Add support for 250k baud by settint clock div to 1.
+            // divider = UARTclk / (baud * 16)
+            // 6 = 24Mhz / (250k * 16)
+            // This gives us a whole number divider.
+            set_serial_clock_div(ip, IT8786_SERIAL_CLOCK_DIV_1);
+            port->uartclk = 24000000;
         } else {
             // In order to acheive above 115200 baud we need to
             // lower the internal clock divisor to speed up the clock.
