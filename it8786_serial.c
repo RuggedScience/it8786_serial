@@ -16,6 +16,7 @@
 #include <linux/io.h>
 #include <linux/ioport.h>
 #include <linux/serial_8250.h>
+#include <linux/version.h>
 
 #ifndef UART_DIV_MAX
 #define UART_DIV_MAX 0xFFFF
@@ -156,7 +157,11 @@ static void set_serial_clock_div(struct it8786_serial_port *port, uint8_t diviso
     write_sio_reg(0xF0, config);
 }
 
+#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
 static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *termios, const struct ktermios *old)
+#else
+static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *termios, struct ktermios *old)
+#endif
 {
     unsigned int baud;
     struct it8786_serial_port *ip;
