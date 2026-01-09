@@ -40,6 +40,8 @@
 #define IT8786_SERIAL_CLOCK_DIV_1		0b10
 #define IT8786_SERIAL_CLOCK_DIV_1_625	0b11
 
+#define IT8786_SERIAL_IRQ_REG           0x70
+
 #define IT8786_PORT(_ldn) {.ldn = _ldn, .line = -1}
 
 struct it8786_serial_port {
@@ -157,6 +159,16 @@ static void set_serial_clock_div(struct it8786_serial_port *port, uint8_t diviso
     write_sio_reg(0xF0, config);
 }
 
+static uint8_t get_serial_irq(struct it8786_serial_port *port)
+{
+    uint8_t irq;
+
+    set_sio_ldn(port->ldn);
+    irq = read_sio_reg(IT8786_SERIAL_IRQ_REG);
+
+    return irq;
+}
+
 #if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
 static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *termios, const struct ktermios *old)
 #else
@@ -210,6 +222,7 @@ static void it8786_serial_set_termios(struct uart_port *port, struct ktermios *t
 static void __init it8786_register_ports(void)
 {
     int ret, i;
+    uint8_t irq;
     uint16_t iobase;
 
     for (i = 0; i < IT8786_SERIAL_MAX_UART; i++) {
@@ -230,6 +243,7 @@ static void __init it8786_register_ports(void)
         }
 
         iobase = get_serial_base_addr(ip);
+        irq = get_serial_irq(ip);
 
         // We want to enter and exit SIO immediately.
         // Lower lever drivers (8250_fintek) use the same address
@@ -242,6 +256,7 @@ static void __init it8786_register_ports(void)
         ip->up.port.type = PORT_16550A;
         ip->up.port.uartclk = 1843200;
         ip->up.port.iobase = iobase;
+        ip->up.port.irq = irq;
         ip->up.port.set_termios = it8786_serial_set_termios;
         ret = serial8250_register_8250_port(&ip->up);
 
