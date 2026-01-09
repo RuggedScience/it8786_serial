@@ -6,10 +6,10 @@ This module supports all of the standard baud rates up to 115200. After that onl
 
 * 128000
 * 230400
+* 250000
 * 256000
 * 460800
-
-***NOTE: The Super IO chip also supports 921600 baud but currently there is an issue in the module at that speed.***
+* 921600
 
 # Compiling
 Since this module is built against the Linux kernel, it requires the appropriate headers for the current kernel. This also means that it will need to be recompiled if the kernel is updated. Below is a list of steps for compiling and installing this module for the current kernel.
